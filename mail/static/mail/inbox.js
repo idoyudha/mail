@@ -36,7 +36,7 @@ function send_mail() {
       console.log(result);
       // ... do something else with emails ...
   });
-  load_mailbox('sent')
+  load_mailbox('sent');
   return false;
 }
 
@@ -61,12 +61,42 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
   
-  fetch('/emails/inbox')
+  fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(emails => {
-      // Print emails
+      // Print emails array
       console.log(emails);
-  //    document.querySelector('#compose-view').innerHTML = `<p>${emails.sender, emails.subject, emails.timestamp}</p>`;
+
+      // Get data from json array
+      for (var i = 0; i < emails.length; i++) {
+        var obj = emails[i];
+        var html_inbox = `<table class="table table-hover">
+                          <tbody>
+                            <tr>
+                              <td class="text-left">${obj.sender}</td>
+                              <td class="text-left">${obj.subject}</td>
+                              <td class="text-right">${obj.timestamp}</td>
+                            </tr>
+                          </tbody>
+                          </table>`
+
+        var html_sent = `<table class="table table-hover">
+                          <tbody>
+                            <tr>
+                              <td class="text-left">${obj.recipients}</td>
+                              <td class="text-left">${obj.subject}</td>
+                              <td class="text-right">${obj.timestamp}</td>
+                            </tr>
+                          </tbody>
+                          </table>`
+        if (mailbox === 'inbox') {
+          document.getElementById("emails-view").innerHTML += html_inbox;
+        }
+        else if (mailbox === 'sent') {
+          document.getElementById("emails-view").innerHTML += html_sent;
+        }
+        
+      }
   // ... do something else with emails ...
   });
 }
