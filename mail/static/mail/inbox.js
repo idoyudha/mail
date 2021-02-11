@@ -66,37 +66,44 @@ function load_mailbox(mailbox) {
   .then(emails => {
       // Print emails array
       console.log(emails);
-
-      // Get data from json array
+      console.log(emails.length);
+      
       for (var i = 0; i < emails.length; i++) {
         var obj = emails[i];
-        var html_inbox = `<table class="table table-hover">
-                          <tbody>
-                            <tr>
-                              <td class="text-left">${obj.sender}</td>
-                              <td class="text-left">${obj.subject}</td>
-                              <td class="text-right">${obj.timestamp}</td>
-                            </tr>
-                          </tbody>
-                          </table>`
 
-        var html_sent = `<table class="table table-hover">
-                          <tbody>
-                            <tr>
-                              <td class="text-left">${obj.recipients}</td>
-                              <td class="text-left">${obj.subject}</td>
-                              <td class="text-right">${obj.timestamp}</td>
-                            </tr>
-                          </tbody>
-                          </table>`
-        if (mailbox === 'inbox') {
-          document.getElementById("emails-view").innerHTML += html_inbox;
-        }
-        else if (mailbox === 'sent') {
-          document.getElementById("emails-view").innerHTML += html_sent;
-        }
+        // create a new div element
+        const mail = document.createElement("div");
+        mail.className = "row rounded-right";
+        // add the newly created element and its content into the DOM
+        const a = document.getElementById("emails-view");
+        const div = a.appendChild(mail)
         
+        const user = document.createElement("div");
+        user.className = "col";
+        if (mailbox === 'inbox') {
+          user.innerHTML = obj.sender;
+          div.appendChild(user);
+        } else {
+          user.innerHTML = obj.recipients;
+          div.appendChild(user);
+        }
+        const subject = document.createElement("div");
+        subject.className = "col-6";
+        subject.innerHTML = obj.subject;
+        div.appendChild(subject)
+
+        const time = document.createElement("div");
+        time.className = "col text-right";
+        time.innerHTML = obj.timestamp;
+        div.appendChild(time);
+        
+        // make loop just one time
+        // div.appendChild(br)
       }
+      
+
+      
+      
   // ... do something else with emails ...
   });
 }
