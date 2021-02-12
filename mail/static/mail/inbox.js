@@ -76,7 +76,12 @@ function load_mailbox(mailbox) {
         // create a new div element
         const mail = document.createElement("div");
         mail.className = "row rounded-right";
-        mail.id = `email_id-${obj.id}`;
+
+        if (obj.read) {
+          mail.id = "email_read";
+        } else {
+          mail.id = "email_unread";
+        }
 
         // render details for every email data (only work for last loop)
         mail.addEventListener('click', () => {
@@ -119,6 +124,13 @@ function view_email(email_id) {
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-view').style.display = 'block';
 
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  });
+
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
@@ -148,7 +160,6 @@ function view_email(email_id) {
 
       bd.innerHTML = `${email.sender}` + `<br>` + `${email.timestamp}` + `<br>` + `To: ${email.recipients}` + `<hr>` + `${email.body}`;
       div.appendChild(bd);
-
   });
 
 }

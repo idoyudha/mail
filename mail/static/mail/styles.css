@@ -10,14 +10,25 @@ textarea {
     min-height: 400px;
 }
 
-.row {
+#email_unread {
+    background-color: #292929;
+    margin: 1px;
+    height: 20px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    height: 40px;
+    border-left: 5px solid #000884;
+    border-bottom: 1px solid black;
+}
+
+#email_read {
     background-color: #292929;
     margin: 1px;
     height: 20px;
     color: white;
     font-size: 14px;
     height: 40px;
-    border-left: 5px solid #000884;
     border-bottom: 1px solid black;
 }
 
