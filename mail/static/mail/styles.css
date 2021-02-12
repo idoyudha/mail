@@ -32,7 +32,7 @@ textarea {
     border-bottom: 1px solid black;
 }
 
-.row:hover {
+#email_unread:hover, #email_read:hover {
     cursor: pointer;
     background-color: #323232;
 }

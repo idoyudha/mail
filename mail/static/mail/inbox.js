@@ -138,9 +138,10 @@ function view_email(email_id) {
       console.log(email);
       
       // Show reply button 
-      document.querySelector('#open-view').innerHTML = `<a href="#" class="btn btn-sm btn-outline-primary mb-2" id="reply">Reply</a>`;
+      document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>` + 
+      `<button type="button" class="btn btn-sm btn-outline-success mb-2 ml-2" id="archive">Archive</button>`;
 
-      // create a new div element
+      // create a new div element for email detail
       const mail = document.createElement("div");
       mail.className = "card text-white bg-dark mb-3";
       mail.id = "data";
@@ -160,6 +161,23 @@ function view_email(email_id) {
 
       bd.innerHTML = `${email.sender}` + `<br>` + `${email.timestamp}` + `<br>` + `To: ${email.recipients}` + `<hr>` + `${email.body}`;
       div.appendChild(bd);
+
+      // archieve functions
+      document.getElementById("archive").addEventListener('click', () => {
+        fetch(`/emails/${email_id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              archived: true
+          })
+        });
+        load_mailbox('inbox');
+      });
+
+      if (email.archived) {
+        document.getElementById("archive").innerHTML = "Unarchive";
+      } else {
+        document.getElementById("archive").innerHTML = "Archive";
+      }
   });
 
 }
