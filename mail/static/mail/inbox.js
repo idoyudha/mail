@@ -55,7 +55,7 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
-  
+  console.log(mailbox);
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
@@ -137,7 +137,7 @@ function view_email(email_id) {
       // Print email
       console.log(email);
       
-      // Show reply button 
+      // Show reply button
       document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>` + 
       `<button type="button" class="btn btn-sm btn-outline-success mb-2 ml-2" id="archive">Archive</button>`;
 
@@ -163,19 +163,27 @@ function view_email(email_id) {
       div.appendChild(bd);
 
       // archieve functions
-      document.getElementById("archive").addEventListener('click', () => {
-        fetch(`/emails/${email_id}`, {
-          method: 'PUT',
-          body: JSON.stringify({
-              archived: true
-          })
-        });
-        load_mailbox('inbox');
-      });
-
       if (email.archived) {
+        document.getElementById("archive").addEventListener('click', () => {
+          fetch(`/emails/${email_id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: false
+            })
+          });
+          load_mailbox('inbox');
+        });
         document.getElementById("archive").innerHTML = "Unarchive";
       } else {
+        document.getElementById("archive").addEventListener('click', () => {
+          fetch(`/emails/${email_id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: true
+            })
+          });
+          load_mailbox('inbox');
+        });
         document.getElementById("archive").innerHTML = "Archive";
       }
   });
