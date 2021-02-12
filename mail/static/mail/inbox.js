@@ -11,10 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Send email after submit form 
   document.querySelector('form').onsubmit = send_mail;
-
   
 });
-
 
 function send_mail() {
 
@@ -72,8 +70,8 @@ function load_mailbox(mailbox) {
       // Print emails array
       console.log(emails);
 
-      for (var i = 0; i < emails.length; i++) {
-        var obj = emails[i];
+      for (let i = 0; i < emails.length; i++) {
+        let obj = emails[i];
 
         // create a new div element
         const mail = document.createElement("div");
@@ -83,6 +81,7 @@ function load_mailbox(mailbox) {
         // render details for every email data (only work for last loop)
         mail.addEventListener('click', () => {
           view_email(obj.id);
+          console.log(obj.id)
         })
 
         // add the newly created element and its content into the DOM
@@ -98,6 +97,7 @@ function load_mailbox(mailbox) {
           user.innerHTML = obj.recipients;
           div.appendChild(user);
         }
+
         const subject = document.createElement("div");
         subject.className = "col-6";
         subject.innerHTML = obj.subject;
@@ -127,7 +127,7 @@ function view_email(email_id) {
       
       // Show reply button 
       document.querySelector('#open-view').innerHTML = `<a href="#" class="btn btn-sm btn-outline-primary mb-2" id="reply">Reply</a>`;
-      
+
       // create a new div element
       const mail = document.createElement("div");
       mail.className = "card text-white bg-dark mb-3";
@@ -139,7 +139,6 @@ function view_email(email_id) {
 
       const bd = document.createElement("div");
       bd.className = "card-body";
-      //`<a href="#" class="btn btn-sm btn-outline-primary" id="reply">Reply</a>`
 
       const subject = document.createElement("div");
       subject.className = "card-header";
