@@ -6,12 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
-  // Send email after submit form 
-  document.querySelector('form').onsubmit = send_mail;
-  
   // By default, load the inbox
   load_mailbox('inbox');
+
+  // Send email after submit form 
+  document.querySelector('form').onsubmit = send_mail;
+
+  
 });
+
 
 function send_mail() {
 
@@ -45,6 +48,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#open-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -57,7 +61,8 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
-
+  document.querySelector('#open-view').style.display = 'none';
+  
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
   
@@ -66,14 +71,20 @@ function load_mailbox(mailbox) {
   .then(emails => {
       // Print emails array
       console.log(emails);
-      console.log(emails.length);
-      
+
       for (var i = 0; i < emails.length; i++) {
         var obj = emails[i];
 
         // create a new div element
         const mail = document.createElement("div");
         mail.className = "row rounded-right";
+        mail.id = `email_id-${obj.id}`;
+
+        // render details for every email data (only work for last loop)
+        mail.addEventListener('click', () => {
+          view_email(obj.id);
+        })
+
         // add the newly created element and its content into the DOM
         const a = document.getElementById("emails-view");
         const div = a.appendChild(mail)
@@ -90,20 +101,55 @@ function load_mailbox(mailbox) {
         const subject = document.createElement("div");
         subject.className = "col-6";
         subject.innerHTML = obj.subject;
-        div.appendChild(subject)
+        div.appendChild(subject);
 
         const time = document.createElement("div");
         time.className = "col text-right";
-        time.innerHTML = obj.timestamp;
+        timedate = obj.timestamp;
+        time.innerHTML = timedate;
         div.appendChild(time);
-        
-        // make loop just one time
-        // div.appendChild(br)
       }
-      
-
-      
-      
-  // ... do something else with emails ...
   });
+}
+
+function view_email(email_id) {
+
+  // Show email view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#open-view').style.display = 'block';
+
+  fetch(`/emails/${email_id}`)
+  .then(response => response.json())
+  .then(email => {
+      // Print email
+      console.log(email);
+      
+      // Show reply button 
+      document.querySelector('#open-view').innerHTML = `<a href="#" class="btn btn-sm btn-outline-primary mb-2" id="reply">Reply</a>`;
+      
+      // create a new div element
+      const mail = document.createElement("div");
+      mail.className = "card text-white bg-dark mb-3";
+      mail.id = "data";
+
+      // add the newly created element and its content into the DOM
+      const a = document.getElementById("open-view");
+      const div = a.appendChild(mail);
+
+      const bd = document.createElement("div");
+      bd.className = "card-body";
+      //`<a href="#" class="btn btn-sm btn-outline-primary" id="reply">Reply</a>`
+
+      const subject = document.createElement("div");
+      subject.className = "card-header";
+      subject.id = "view-subject";
+      subject.innerHTML = `${email.subject}`;
+      div.appendChild(subject);
+
+      bd.innerHTML = `${email.sender}` + `<br>` + `${email.timestamp}` + `<br>` + `To: ${email.recipients}` + `<hr>` + `${email.body}`;
+      div.appendChild(bd);
+
+  });
+
 }
