@@ -208,5 +208,5 @@ function reply(sender, subject, timestamp, body) {
   // Fill value as specification
   document.querySelector('#compose-recipients').value = sender;
   document.querySelector('#compose-subject').value = `Re: ${subject}`;
-  document.querySelector('#compose-body').value = `On ${timestamp} ${sender} wrote:\n${body}\n-------------\n`;
+  document.querySelector('#compose-body').value = `On ${timestamp} ${sender} wrote:\n${body}\n`;
 }
