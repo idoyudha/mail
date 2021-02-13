@@ -84,7 +84,7 @@ function load_mailbox(mailbox) {
 
         // render details for every email data (only work for last loop)
         mail.addEventListener('click', () => {
-          view_email(obj.id);
+          view_email(obj.id, obj.sender);
           console.log(obj.id)
         })
 
@@ -116,7 +116,7 @@ function load_mailbox(mailbox) {
   });
 }
 
-function view_email(email_id, mailbox) {
+function view_email(email_id, sender) {
 
   // Show email view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -133,12 +133,12 @@ function view_email(email_id, mailbox) {
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
-      // Print email
+      
       let user = document.getElementById("user_email").textContent;
 
       // check is we are in sent directory
-      if (user != email.sender) {
-        document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>` + 
+      if (user != sender) {
+        document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="reply">Reply</button>` + 
         `<button type="button" class="btn btn-sm btn-outline-success mb-2 ml-2" id="archive">Archive</button>`;
         // archieve functions
         if (email.archived) {
@@ -165,9 +165,12 @@ function view_email(email_id, mailbox) {
           document.getElementById("archive").innerHTML = "Archive";
         }
       } else {
-        document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>`;
+        document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="reply">Reply</button>`;
       }
-      
+
+      // Passing value to reply functions
+      document.getElementById("reply").addEventListener('click', () => reply(email.sender, email.subject, email.timestamp, email.body));
+
       // create a new div element for email detail
       const mail = document.createElement("div");
       mail.className = "card text-white bg-dark mb-3";
@@ -193,6 +196,10 @@ function view_email(email_id, mailbox) {
 
 }
 
-function reply(email_id) {
+function reply(sender, subject, timestamp, body) {
+  compose_email();
 
+  document.querySelector('#compose-recipients').value = sender;
+  document.querySelector('#compose-subject').value = `Re: ${subject}`;
+  document.querySelector('#compose-body').value = `On ${timestamp} ${sender} wrote:\n\n${body}\n\n`;
 }
