@@ -85,7 +85,6 @@ function load_mailbox(mailbox) {
         // render details for every email data (only work for last loop)
         mail.addEventListener('click', () => {
           view_email(obj.id, obj.sender);
-          console.log(obj.id)
         })
 
         // add the newly created element and its content into the DOM
@@ -117,7 +116,6 @@ function load_mailbox(mailbox) {
 }
 
 function view_email(email_id, sender) {
-
   // Show email view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
@@ -134,8 +132,9 @@ function view_email(email_id, sender) {
   .then(response => response.json())
   .then(email => {
       
+      // get text of email in h3
       let user = document.getElementById("user_email").textContent;
-
+  
       // check is we are in sent directory
       if (user != sender) {
         document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="reply">Reply</button>` + 
@@ -167,39 +166,47 @@ function view_email(email_id, sender) {
       } else {
         document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="reply">Reply</button>`;
       }
-
+    
       // Passing value to reply functions
       document.getElementById("reply").addEventListener('click', () => reply(email.sender, email.subject, email.timestamp, email.body));
-
+    
       // create a new div element for email detail
       const mail = document.createElement("div");
       mail.className = "card text-white bg-dark mb-3";
       mail.id = "data";
-
+    
       // add the newly created element and its content into the DOM
       const a = document.getElementById("open-view");
       const div = a.appendChild(mail);
-
-      const bd = document.createElement("div");
-      bd.className = "card-body";
-
+    
       const subject = document.createElement("div");
       subject.className = "card-header";
       subject.id = "view-subject";
       subject.innerHTML = `${email.subject}`;
       div.appendChild(subject);
-
-      bd.innerHTML = `${email.sender}` + `<br>` + `${email.timestamp}` + `<br>` + `To: ${email.recipients}` + `<hr>` + `${email.body}`;
-      div.appendChild(bd);
-
+    
+      const bd = document.createElement("div");
+      bd.className = "card-body";
+      const det = div.appendChild(bd);
+    
+      const detail = document.createElement("div");
+      detail.id = "detail";
+      detail.innerHTML = `${email.sender}` + `<br>` + `${email.timestamp}` + `<br>` + `To: ${email.recipients}` +  `<hr>`
+      det.appendChild(detail);
+    
+      const body_text = document.createElement("div");
+      body_text.id = "body_text";
+      body_text.innerHTML = `<pre>${email.body}</pre>`;
+      det.appendChild(body_text);
   });
-
 }
 
 function reply(sender, subject, timestamp, body) {
+  // Load compose function
   compose_email();
 
+  // Fill value as specification
   document.querySelector('#compose-recipients').value = sender;
   document.querySelector('#compose-subject').value = `Re: ${subject}`;
-  document.querySelector('#compose-body').value = `On ${timestamp} ${sender} wrote:\n\n${body}\n\n`;
+  document.querySelector('#compose-body').value = `On ${timestamp} ${sender} wrote:\n${body}\n-------------\n`;
 }

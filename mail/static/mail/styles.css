@@ -54,3 +54,9 @@ textarea {
 .card-body { 
     font-size: 15px;
 }
+
+pre {
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+}
