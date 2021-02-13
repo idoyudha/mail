@@ -36,8 +36,8 @@ function send_mail() {
       // Print emails
       console.log(result);
       // ... do something else with emails ...
+      load_mailbox('sent');
   });
-  load_mailbox('sent');
   return false;
 }
 
@@ -117,12 +117,16 @@ function load_mailbox(mailbox) {
   });
 }
 
-function view_email(email_id) {
+function view_email(email_id, mailbox) {
 
   // Show email view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-view').style.display = 'block';
+
+  // Show reply and archive button (not yet done for sent type)
+  //document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>` + 
+  //`<button type="button" class="btn btn-sm btn-outline-success mb-2 ml-2" id="archive">Archive</button>`;
 
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
@@ -135,12 +139,40 @@ function view_email(email_id) {
   .then(response => response.json())
   .then(email => {
       // Print email
-      console.log(email);
-      
-      // Show reply button
-      document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>` + 
-      `<button type="button" class="btn btn-sm btn-outline-success mb-2 ml-2" id="archive">Archive</button>`;
+      let user = document.getElementById("user_email").textContent;
 
+      // check is we are in sent directory
+      if (user != email.sender) {
+        document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>` + 
+        `<button type="button" class="btn btn-sm btn-outline-success mb-2 ml-2" id="archive">Archive</button>`;
+        // archieve functions
+        if (email.archived) {
+          document.getElementById("archive").addEventListener('click', () => {
+            fetch(`/emails/${email_id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                  archived: false
+              })
+            });
+            load_mailbox('inbox');
+          });
+          document.getElementById("archive").innerHTML = "Unarchive";
+        } else {
+          document.getElementById("archive").addEventListener('click', () => {
+            fetch(`/emails/${email_id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                  archived: true
+              })
+            });
+            load_mailbox('inbox');
+          });
+          document.getElementById("archive").innerHTML = "Archive";
+        }
+      } else {
+        document.querySelector('#open-view').innerHTML = `<button type="button" class="btn btn-sm btn-outline-primary mb-2 ml-2" id="button">Reply</button>`;
+      }
+      
       // create a new div element for email detail
       const mail = document.createElement("div");
       mail.className = "card text-white bg-dark mb-3";
@@ -162,30 +194,6 @@ function view_email(email_id) {
       bd.innerHTML = `${email.sender}` + `<br>` + `${email.timestamp}` + `<br>` + `To: ${email.recipients}` + `<hr>` + `${email.body}`;
       div.appendChild(bd);
 
-      // archieve functions
-      if (email.archived) {
-        document.getElementById("archive").addEventListener('click', () => {
-          fetch(`/emails/${email_id}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                archived: false
-            })
-          });
-          load_mailbox('inbox');
-        });
-        document.getElementById("archive").innerHTML = "Unarchive";
-      } else {
-        document.getElementById("archive").addEventListener('click', () => {
-          fetch(`/emails/${email_id}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                archived: true
-            })
-          });
-          load_mailbox('inbox');
-        });
-        document.getElementById("archive").innerHTML = "Archive";
-      }
   });
 
 }
