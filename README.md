@@ -1,7 +1,7 @@
 # Mail
 Design a front-end for an email client that makes API calls to send and receive emails.
 
-## mail
+## Overview
 Mail is the fourth project for Harvard CS50's Web Programming with Python and JavaScript course. 
 The project specifications are listed [here](https://cs50.harvard.edu/web/2020/projects/3/mail/). And the [demonstration](https://youtu.be/-KnPv6C5ODc).
 
